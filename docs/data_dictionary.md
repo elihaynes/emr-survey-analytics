@@ -1,5 +1,49 @@
 # Data Dictionary
 
+## Schema diagram
+
+How the four tables connect. `||` = "one", `o{` = "many".
+
+```mermaid
+erDiagram
+  patients ||--o{ encounters : "has visits"
+  encounters ||--o{ survey_responses : "collects answers"
+  survey_questions ||--o{ survey_responses : "is answered in"
+  patients {
+    INTEGER patient_id PK
+    TEXT first_name
+    TEXT last_name
+    TEXT birth_date
+    TEXT sex
+    TEXT phone
+    TEXT email
+    TEXT street
+    TEXT city
+    TEXT state
+    TEXT zip_code
+  }
+  encounters {
+    INTEGER encounter_id PK
+    INTEGER patient_id FK
+    TEXT visit_date
+    TEXT encounter_type
+    TEXT provider_name
+    TEXT chief_complaint
+    TEXT outcome
+  }
+  survey_questions {
+    INTEGER question_id PK
+    TEXT question_text
+    TEXT category
+  }
+  survey_responses {
+    INTEGER response_id PK
+    INTEGER encounter_id FK
+    INTEGER question_id FK
+    INTEGER answer
+  }
+```
+
 ## patients
 
 One row per patient. Stores demographic and contact information.
