@@ -86,6 +86,22 @@ Ideas and improvements to build later. Each item becomes its own feature branch 
   - [ ] Check 1 output is one table with one header and four rows
   - [ ] Expected counts comment still matches the output
 
+### BL-006: Modular patient name fields
+
+- **Priority:** Medium
+- **Found during:** Phase 3, Step 3.5 (external suggestion)
+- **Problem:** `patients` stores names as `first_name` and `last_name` only. That can't represent middle names, suffixes (e.g. `Jr.`, `III`), or the name a patient prefers to be called. "First" and "last" also assume a name order that many cultures don't use; some place the family name first. EMRs need structured names for sorting, matching records, and legal documents.
+- **Proposed change:**
+  - Replace `first_name` / `last_name` with modular fields: `given_name`, `middle_names`, `family_name`, `suffix`, `preferred_name`.
+  - `given_name` and `family_name` required; `middle_names`, `suffix`, and `preferred_name` **optional** (`NULL` allowed).
+  - Use "given" and "family" rather than "first" and "last" so the fields don't assume a name order.
+  - Consider the same structure for `encounters.provider_name`, currently a single `Last, First` text field.
+- **Acceptance criteria:**
+  - [ ] Schema updated with the new name columns and correct `NOT NULL` rules
+  - [ ] Generator produces some patients with middle names, suffixes, and preferred names, and some without
+  - [ ] Loader, queries, and validation checks updated to the new column names
+  - [ ] Data dictionary updated
+
 ## Done
 
 _Nothing yet._
