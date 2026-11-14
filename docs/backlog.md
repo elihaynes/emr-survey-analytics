@@ -23,6 +23,47 @@ Ideas and improvements to build later. Each item becomes its own feature branch 
   - [ ] Inserting an out-of-range answer is rejected
   - [ ] Data dictionary updated
 
+### BL-002: Standardize patient phone number format
+
+- **Priority:** Medium
+- **Found during:** Phase 3, reviewing generated `patients.csv`
+- **Problem:** Phone numbers arrive in inconsistent formats, e.g. `321.581.9600`, `(518)349-5931x0341`. Some include extensions. Inconsistent formats make searching, deduplication, and contacting patients unreliable. Real EMR data has the same problem because different staff enter data differently.
+- **Proposed change:** Clean phone numbers during ingestion into one standard format (e.g. `555-555-5555`), storing any extension in a separate `phone_ext` column. Flag numbers that can't be parsed instead of silently dropping them.
+- **Acceptance criteria:**
+  - [ ] All loaded phone numbers match the standard format
+  - [ ] Extensions preserved in their own column
+  - [ ] Unparseable numbers reported in the load output
+  - [ ] Schema and data dictionary updated
+
+### BL-003: Support British Columbia, Canada addresses in mock data
+
+- **Priority:** Medium
+- **Found during:** Phase 3, reviewing generated `patients.csv`
+- **Problem:** The generator produces US addresses (`state`, 5-digit `zip_code`). The portal should be able to model patients in British Columbia, Canada, which uses municipalities, provinces, and postal codes in the format `A1A 1A1`.
+- **Proposed change:**
+  - Generate addresses with Faker's Canadian locale (`en_CA`), restricted to BC municipalities (e.g. Vancouver, Surrey, Victoria, Kelowna) and province `BC`.
+  - Rename address columns to location-neutral names: `state` → `province`, `zip_code` → `postal_code`, and decide whether `city` should become `municipality`.
+  - Validate postal code format (`A1A 1A1`) and BC's postal prefix (`V`).
+- **Acceptance criteria:**
+  - [ ] Generated patients have BC municipalities, province `BC`, and valid `V#A #A#` postal codes
+  - [ ] Schema columns renamed, with all scripts and queries updated to match
+  - [ ] Data dictionary updated (column names, formats, examples)
+
+### BL-004: Simulate skipped survey answers in mock data
+
+- **Priority:** Medium
+- **Found during:** Phase 3, sanity-checking generated row counts
+- **Problem:** The generator answers every survey question at every encounter, so `survey_responses = encounters × 4` always holds. Real patients skip questions, run out of time, or decline to answer. Analysis and validation built on perfectly complete mock data may break, or give misleading results, on real data.
+- **Proposed change:**
+  - Make the generator randomly skip a configurable share of answers (e.g. `SKIP_RATE = 0.05`).
+  - Replace the `responses = encounters × 4` check with checks that stay valid when answers are missing: no encounter has **more than** one response per question, and report the share of missing answers.
+  - Document each validation check's assumptions alongside the check. A check that's only valid under certain assumptions should say so.
+- **Acceptance criteria:**
+  - [ ] Generator skips roughly `SKIP_RATE` of answers, reproducibly with the fixed seed
+  - [ ] Validation queries detect duplicate answers and report missing-answer rates
+  - [ ] Each validation check states its assumptions
+  - [ ] Analytical queries handle missing answers deliberately (documented decision on how averages treat skipped questions)
+
 ## Done
 
 _Nothing yet._
