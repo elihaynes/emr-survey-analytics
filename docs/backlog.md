@@ -64,6 +64,28 @@ Ideas and improvements to build later. Each item becomes its own feature branch 
   - [ ] Each validation check states its assumptions
   - [ ] Analytical queries handle missing answers deliberately (documented decision on how averages treat skipped questions)
 
+### BL-005: Combine validation row counts into a single result table
+
+- **Priority:** Low
+- **Found during:** Phase 3, Step 3.4 (post-load validation)
+- **Problem:** Check 1 in `sql/queries/00_validation.sql` runs four separate `COUNT(*)` queries, so the output repeats the header four times and is harder to scan or paste into a load log.
+- **Proposed change (option):** Replace the four queries with one `UNION ALL` statement that stacks the counts into a single table:
+
+  ```sql
+  SELECT 'patients' AS table_name, COUNT(*) AS row_count FROM patients
+  UNION ALL
+  SELECT 'encounters', COUNT(*) FROM encounters
+  UNION ALL
+  SELECT 'survey_questions', COUNT(*) FROM survey_questions
+  UNION ALL
+  SELECT 'survey_responses', COUNT(*) FROM survey_responses;
+  ```
+
+  Only the first `SELECT` needs aliases, and the whole statement ends with a single semicolon.
+- **Acceptance criteria:**
+  - [ ] Check 1 output is one table with one header and four rows
+  - [ ] Expected counts comment still matches the output
+
 ## Done
 
 _Nothing yet._
