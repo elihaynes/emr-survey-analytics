@@ -34,3 +34,15 @@ JOIN encounters AS e
 GROUP BY p.patient_id
 HAVING COUNT(*) >= 4
 ORDER BY visits DESC, p.patient_id;
+
+
+-- A4: Number of patients and average age for each sex, rounded to 1 decimal.
+-- Columns: sex, patients, avg_age
+
+SELECT p.sex,
+       COUNT(*) AS patients,
+       ROUND(AVG((julianday('now') - julianday(p.birth_date)) / 365.25), 1) AS avg_age
+FROM patients AS p
+GROUP BY p.sex
+ORDER BY p.sex;
+
