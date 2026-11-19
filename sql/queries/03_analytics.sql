@@ -24,3 +24,13 @@ JOIN survey_questions AS q
 WHERE q.category = 'pain'
 GROUP BY e.encounter_type
 ORDER BY avg_pain DESC;
+
+-- A3: Patients with 4 or more visits, most visits first.
+
+SELECT p.patient_id, p.first_name, p.last_name, COUNT(*) AS visits
+FROM patients AS p
+JOIN encounters AS e
+  ON e.patient_id = p.patient_id
+GROUP BY p.patient_id
+HAVING COUNT(*) >= 4
+ORDER BY visits DESC, p.patient_id;
