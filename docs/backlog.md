@@ -102,6 +102,18 @@ Ideas and improvements to build later. Each item becomes its own feature branch 
   - [ ] Loader, queries, and validation checks updated to the new column names
   - [ ] Data dictionary updated
 
+### BL-007: Recreate views automatically when the database is rebuilt
+
+- **Priority:** Medium
+- **Found during:** Phase 3, Step 3.8 (views)
+- **Problem:** `src/load_data.py` deletes and rebuilds `db/emr.db`, which also deletes every view (e.g. `v_survey_answers`). After each reload, views must be recreated by hand. If someone forgets, queries that use a view fail with "no such table."
+- **Proposed change:** After loading the data, have the loader run every `.sql` file in `sql/views/` (in a fixed order, e.g. sorted by filename) and print each view it created.
+- **Acceptance criteria:**
+  - [ ] Running the loader once produces a database with all tables **and** all views
+  - [ ] `SELECT COUNT(*) FROM v_survey_answers;` returns 2384 right after a fresh load
+  - [ ] Loader output lists the views it created
+  - [ ] A broken view file stops the load with a clear error
+
 ## Done
 
 _Nothing yet._
