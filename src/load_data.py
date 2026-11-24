@@ -8,9 +8,11 @@ import csv
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path("db/emr.db")
-SCHEMA_PATH = Path("sql/schema/001_create_tables.sql")
-DATA_DIR = Path("data/raw")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent  # src/load_data.py -> project root
+
+DB_PATH = PROJECT_ROOT / "db" / "emr.db"
+SCHEMA_PATH = PROJECT_ROOT / "sql" / "schema" / "001_create_tables.sql"
+DATA_DIR = PROJECT_ROOT / "data" / "raw"
 
 # Parent tables must load before the child tables that point to them.
 LOAD_ORDER = ["patients", "encounters", "survey_questions", "survey_responses"]
@@ -52,3 +54,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
