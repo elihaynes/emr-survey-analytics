@@ -13,16 +13,12 @@ ORDER BY COUNT(*) DESC;
 
 -- A2: Average pain score by encounter type, highest first.
 
-SELECT e.encounter_type,
-       COUNT(*)                 AS responses,
-       ROUND(AVG(r.answer), 2)      AS avg_pain
-FROM encounters AS e
-JOIN survey_responses AS r
-  ON r.encounter_id = e.encounter_id
-JOIN survey_questions AS q
-  ON r.question_id = q.question_id
-WHERE q.category = 'pain'
-GROUP BY e.encounter_type
+SELECT encounter_type,
+       COUNT(*)              AS responses,
+       ROUND(AVG(answer), 2) AS avg_pain
+FROM v_survey_answers
+WHERE category = 'pain'
+GROUP BY encounter_type
 ORDER BY avg_pain DESC;
 
 -- A3: Patients with 4 or more visits, most visits first.
