@@ -96,3 +96,29 @@ One row per answer: one patient’s answer to one question at one encounter.
 | encounter_id | INTEGER | Yes | The encounter during which the survey was completed (foreign key → `encounters.encounter_id`). | Must match an existing `encounter_id` |
 | question_id | INTEGER | Yes | The survey question being answered (foreign key → `survey_questions.question_id`). | Must match an existing `question_id` |
 | answer | INTEGER | Yes | Patient's response to the survey question. | Whole number. Scale depends on the question; see `survey_questions.question_text`. |
+
+## Views
+
+Views are saved queries. They store no data of their own; each one reads from the tables above every time it's queried. View files live in `sql/views/`. Rebuilding the database deletes them, so recreate them after every load (see README step 4).
+
+### v_survey_answers
+
+One row per survey answer (same as `survey_responses`), with the visit, question, and patient details attached. Use it for answer-level analysis, such as average scores by visit type. Don't use it to count visits or patients: each visit appears once per question answered, so `COUNT(*)` would overcount.
+
+Leaves out names and contact details on purpose (minimum necessary). Join to `patients` on `patient_id` only when identifiers are truly needed.
+
+| Column | Type | Source | Description |
+|---|---|---|---|
+| response_id | INTEGER | `survey_responses.response_id` | Unique answer identifier. One row per value. |
+| patient_id | INTEGER | `encounters.patient_id` | The patient who answered. |
+| encounter_id | INTEGER | `encounters.encounter_id` | The visit where the answer was given. |
+| visit_date | TEXT | `encounters.visit_date` | Date of the visit. `YYYY-MM-DD` |
+| encounter_type | TEXT | `encounters.encounter_type` | `office`, `telehealth`, or `follow_up` |
+| provider_name | TEXT | `encounters.provider_name` | Clinician who saw the patient. `Last, First` |
+| chief_complaint | TEXT | `encounters.chief_complaint` | Main reason for the visit. |
+| sex | TEXT | `patients.sex` | `F`, `M`, `X`, `U` |
+| age | REAL | Calculated from `patients.birth_date` | Patient's age in years **today** (not at the visit), rounded to 1 decimal. Changes as time passes. |
+| question_id | INTEGER | `survey_questions.question_id` | The question answered. |
+| question_text | TEXT | `survey_questions.question_text` | Wording of the question, including its scale. |
+| category | TEXT | `survey_questions.category` | e.g. `pain`, `sleep`, `mood` |
+| answer | INTEGER | `survey_responses.answer` | The patient's score. |
