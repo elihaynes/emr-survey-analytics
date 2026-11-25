@@ -1,7 +1,8 @@
 """Load mock EMR CSV files from data/raw/ into the SQLite database.
 
 Rebuilds db/emr.db from scratch on every run: deletes the old database,
-creates empty tables from the schema, then loads each CSV.
+creates empty tables from the schema, loads each CSV, then creates the
+views from sql/views/.
 """
 
 import csv
@@ -13,6 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent  # src/load_data.py -> pro
 DB_PATH = PROJECT_ROOT / "db" / "emr.db"
 SCHEMA_PATH = PROJECT_ROOT / "sql" / "schema" / "001_create_tables.sql"
 DATA_DIR = PROJECT_ROOT / "data" / "raw"
+VIEWS_DIR = PROJECT_ROOT / "sql" / "views"
 
 # Parent tables must load before the child tables that point to them.
 LOAD_ORDER = ["patients", "encounters", "survey_questions", "survey_responses"]
@@ -42,6 +44,19 @@ def load_table(conn, table):
     return len(rows)
 
 
+def create_views(conn):
+    """Run every .sql file in sql/views/, in filename order. Return the view names."""
+    created = []
+    for path in sorted(VIEWS_DIR.glob("*.sql")):
+        try:
+            conn.executescript(path.read_text())
+            conn.execute(f"SELECT * FROM {path.stem} LIMIT 0")   # querying fails if the view is broken
+        except sqlite3.Error as error:
+            raise RuntimeError(f"View file {path.name} failed: {error}") from error
+        created.append(path.stem)  # file name without .sql = view name
+    return created
+
+
 def main():
     conn = create_database()
     try:
@@ -49,6 +64,8 @@ def main():
             for table in LOAD_ORDER:
                 count = load_table(conn, table)
                 print(f"Loaded {count:>5} rows -> {table}")
+        for view in create_views(conn):
+            print(f"Created view -> {view}")
     finally:
         conn.close()
 

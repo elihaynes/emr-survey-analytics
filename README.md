@@ -22,19 +22,13 @@ Run every command from the project root folder.
    python src/generate_mock_data.py
    ```
 
-3. **Load the data into SQLite** (rebuilds `db/emr.db` from scratch):
+3. **Load the data into SQLite** (rebuilds `db/emr.db` from scratch, including all views in `sql/views/`):
 
    ```bash
    python src/load_data.py
    ```
 
-4. **Create the views.** Do this after every load, because step 3 deletes them:
-
-   ```bash
-   sqlite3 db/emr.db < sql/views/v_survey_answers.sql
-   ```
-
-5. **Run the queries:**
+4. **Run the queries:**
 
    ```bash
    sqlite3 -header -column db/emr.db < sql/queries/03_analytics.sql
