@@ -25,7 +25,6 @@ Run every command from the project root folder.
 3. **Load the data into SQLite** (rebuilds `db/emr.db` from scratch):
 
    ```bash
-   mkdir -p db
    python src/load_data.py
    ```
 

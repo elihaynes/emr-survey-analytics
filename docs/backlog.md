@@ -114,19 +114,18 @@ Ideas and improvements to build later. Each item becomes its own feature branch 
   - [ ] Loader output lists the views it created
   - [ ] A broken view file stops the load with a clear error
 
+## Done
+
 ### BL-008: Create the database folder automatically on load
 
 - **Priority:** Low
+- **Pull Request:** [#1](https://github.com/elihaynes/emr-survey-analytics/pull/1)
 - **Found during:** Phase 3, testing the README run steps in a fresh clone
 - **Problem:** `db/` isn't tracked by Git (`*.db` is ignored and the folder has no `.gitkeep`), so a fresh clone has no `db/` folder. Running `src/load_data.py` then crashes with "unable to open database file." For now the README works around this with a manual `mkdir -p db` step, which is easy to forget.
 - **Proposed change:**
   - In `create_database()`, create the folder before connecting: `DB_PATH.parent.mkdir(parents=True, exist_ok=True)`.
   - Remove the `mkdir -p db` line from step 3 of the README's "How to run" section, since the loader handles it.
 - **Acceptance criteria:**
-  - [ ] In a fresh clone with no `db/` folder, `python src/load_data.py` succeeds and creates `db/emr.db`
-  - [ ] Running the loader when `db/` already exists still works
-  - [ ] README step 3 no longer includes `mkdir -p db`, and the remaining steps still work in a fresh clone
-
-## Done
-
-_Nothing yet._
+  - [x] In a fresh clone with no `db/` folder, `python src/load_data.py` succeeds and creates `db/emr.db`
+  - [x] Running the loader when `db/` already exists still works
+  - [x] README step 3 no longer includes `mkdir -p db`, and the remaining steps still work in a fresh clone
