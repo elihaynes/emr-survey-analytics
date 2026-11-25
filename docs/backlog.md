@@ -102,18 +102,6 @@ Ideas and improvements to build later. Each item becomes its own feature branch 
   - [ ] Loader, queries, and validation checks updated to the new column names
   - [ ] Data dictionary updated
 
-### BL-007: Recreate views automatically when the database is rebuilt
-
-- **Priority:** Medium
-- **Found during:** Phase 3, Step 3.8 (views)
-- **Problem:** `src/load_data.py` deletes and rebuilds `db/emr.db`, which also deletes every view (e.g. `v_survey_answers`). After each reload, views must be recreated by hand. If someone forgets, queries that use a view fail with "no such table."
-- **Proposed change:** After loading the data, have the loader run every `.sql` file in `sql/views/` (in a fixed order, e.g. sorted by filename) and print each view it created.
-- **Acceptance criteria:**
-  - [ ] Running the loader once produces a database with all tables **and** all views
-  - [ ] `SELECT COUNT(*) FROM v_survey_answers;` returns 2384 right after a fresh load
-  - [ ] Loader output lists the views it created
-  - [ ] A broken view file stops the load with a clear error
-
 ## Done
 
 ### BL-008: Create the database folder automatically on load
@@ -129,3 +117,16 @@ Ideas and improvements to build later. Each item becomes its own feature branch 
   - [x] In a fresh clone with no `db/` folder, `python src/load_data.py` succeeds and creates `db/emr.db`
   - [x] Running the loader when `db/` already exists still works
   - [x] README step 3 no longer includes `mkdir -p db`, and the remaining steps still work in a fresh clone
+
+  ### BL-007: Recreate views automatically when the database is rebuilt
+
+- **Priority:** Medium
+- **Pull Request:** [#2](https://github.com/elihaynes/emr-survey-analytics/pull/2)
+- **Found during:** Phase 3, Step 3.8 (views)
+- **Problem:** `src/load_data.py` deletes and rebuilds `db/emr.db`, which also deletes every view (e.g. `v_survey_answers`). After each reload, views must be recreated by hand. If someone forgets, queries that use a view fail with "no such table."
+- **Proposed change:** After loading the data, have the loader run every `.sql` file in `sql/views/` (in a fixed order, e.g. sorted by filename) and print each view it created.
+- **Acceptance criteria:**
+  - [x] Running the loader once produces a database with all tables **and** all views
+  - [x] `SELECT COUNT(*) FROM v_survey_answers;` returns 2384 right after a fresh load
+  - [x] Loader output lists the views it created
+  - [x] A broken view file stops the load with a clear error
