@@ -99,7 +99,7 @@ One row per answer: one patient’s answer to one question at one encounter.
 
 ## Views
 
-Views are saved queries. They store no data of their own; each one reads from the tables above every time it's queried. View files live in `sql/views/`. Rebuilding the database deletes them, so recreate them after every load (see README step 4).
+Views are saved queries. They store no data of their own; each one reads from the tables above every time it's queried. View files live in `sql/views/`. The loader (`src/load_data.py`) recreates every view automatically after it loads the data.
 
 ### v_survey_answers
 
