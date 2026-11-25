@@ -22,6 +22,7 @@ def create_database():
     """Delete any existing database and build empty tables from the schema."""
     if DB_PATH.exists():
         DB_PATH.unlink()                       # delete the old file
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)  # make sure db/ exists
     conn = sqlite3.connect(DB_PATH)            # creates a new, empty file
     conn.execute("PRAGMA foreign_keys = ON")     # enforce foreign key constraints
     conn.executescript(SCHEMA_PATH.read_text())  # runs your CREATE TABLE file
