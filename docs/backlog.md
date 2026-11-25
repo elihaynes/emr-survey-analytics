@@ -118,7 +118,7 @@ Ideas and improvements to build later. Each item becomes its own feature branch 
   - [x] Running the loader when `db/` already exists still works
   - [x] README step 3 no longer includes `mkdir -p db`, and the remaining steps still work in a fresh clone
 
-  ### BL-007: Recreate views automatically when the database is rebuilt
+### BL-007: Recreate views automatically when the database is rebuilt
 
 - **Priority:** Medium
 - **Pull Request:** [#2](https://github.com/elihaynes/emr-survey-analytics/pull/2)
