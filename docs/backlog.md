@@ -129,4 +129,3 @@ Ideas and improvements to build later. Each item becomes its own feature branch 
   - [x] In a fresh clone with no `db/` folder, `python src/load_data.py` succeeds and creates `db/emr.db`
   - [x] Running the loader when `db/` already exists still works
   - [x] README step 3 no longer includes `mkdir -p db`, and the remaining steps still work in a fresh clone
-  
